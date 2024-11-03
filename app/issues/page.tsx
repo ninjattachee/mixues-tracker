@@ -1,5 +1,6 @@
 import prisma from '@/prisma/client';
-import { Link, Table } from '@radix-ui/themes';
+import { Table } from '@radix-ui/themes';
+import Link from '../components/Link';
 import IssueStatusBadge from '../components/IssueStatusBadge';
 import IssueActions from './IssueActions';
 
