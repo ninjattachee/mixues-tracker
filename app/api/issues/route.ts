@@ -1,7 +1,7 @@
 import prisma from '@/prisma/client'
 import { NextRequest, NextResponse } from 'next/server'
 import { z } from 'zod'
-import { createIssueSchema } from '@/app/validationSchemas'
+import { issueSchema } from '@/app/validationSchemas'
 
 export async function GET(request: NextRequest) {
     const issues = await prisma.issue.findMany()
@@ -11,7 +11,7 @@ export async function GET(request: NextRequest) {
 export async function POST(request: NextRequest) {
     try {
         const body = await request.json()
-        const { title, description } = createIssueSchema.parse(body)
+        const { title, description } = issueSchema.parse(body)
         const issue = await prisma.issue.create({ data: { title, description } })
         return NextResponse.json(issue, { status: 201 })
     } catch (error) {
