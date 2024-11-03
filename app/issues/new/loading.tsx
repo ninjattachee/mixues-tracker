@@ -1,8 +1,5 @@
-import ErrorMessage from '@/app/components/ErrorMessage'
-import { Box, Button, Flex, Skeleton, Spinner, TextField } from '@radix-ui/themes'
-import { register } from 'module'
-import React from 'react'
-import { Controller } from 'react-hook-form'
+import { Flex } from '@radix-ui/themes'
+import { Skeleton } from '@/app/components'
 
 const NewIssueLoading = () => {
     return (
