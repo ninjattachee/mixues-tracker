@@ -12,23 +12,32 @@ import { createIssueSchema } from '@/app/validationSchemas';
 import { z } from 'zod';
 import ErrorMessage from '@/app/components/ErrorMessage';
 import Spinner from '@/app/components/Spinner';
+import { Issue } from '@prisma/client';
 
-type IssueForm = z.infer<typeof createIssueSchema>;
+type IssueFormData = z.infer<typeof createIssueSchema>;
 
 const SimpleMDE = dynamic(
     () => import('react-simplemde-editor'),
     { ssr: false }
 );
 
-const IssueForm = () => {
+interface IssueFormProps {
+    issue?: Issue;
+}
+
+const IssueForm = ({ issue }: IssueFormProps) => {
     const router = useRouter();
-    const { register, handleSubmit, control, formState: { errors } } = useForm<IssueForm>({
+    const { register, handleSubmit, control, formState: { errors } } = useForm<IssueFormData>({
         resolver: zodResolver(createIssueSchema),
+        defaultValues: {
+            title: issue?.title,
+            description: issue?.description ?? '',
+        },
     });
     const [error, setError] = useState('');
     const [isSubmitting, setIsSubmitting] = useState(false);
 
-    const onSubmit = async (data: IssueForm) => {
+    const onSubmit = async (data: IssueFormData) => {
         try {
             setIsSubmitting(true);
             await axios.post('/api/issues', data);
