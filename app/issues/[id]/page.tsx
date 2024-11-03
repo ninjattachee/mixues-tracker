@@ -1,9 +1,9 @@
 import IssueStatusBadge from "@/app/components/IssueStatusBadge"
-import ReactMarkdown from "react-markdown"
 import prisma from "@/prisma/client"
 import { Button, Card, Flex, Heading, Text } from "@radix-ui/themes"
 import Link from "next/link"
 import { notFound } from "next/navigation"
+import ReactMarkdown from "react-markdown"
 
 const IssueDetailPage = async ({ params }: { params: { id: string } }) => {
     const issue = await prisma.issue.findUnique({
