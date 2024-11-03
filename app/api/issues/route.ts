@@ -1,11 +1,7 @@
 import prisma from '@/prisma/client'
 import { NextRequest, NextResponse } from 'next/server'
 import { z } from 'zod'
-
-const createIssueSchema = z.object({
-    title: z.string().min(1, 'Title is required').max(255),
-    description: z.string().min(1, 'Description is required').max(1000),
-})
+import { createIssueSchema } from '@/app/validationSchemas'
 
 export async function GET(request: NextRequest) {
     const issues = await prisma.issue.findMany()
