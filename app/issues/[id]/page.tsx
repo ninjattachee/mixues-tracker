@@ -10,7 +10,7 @@ const IssueDetailPage = async ({ params }: { params: Promise<{ id: string }> }) 
         where: { id: parseInt(id) }
     })
 
-    if (!issue) notFound()
+    if (!issue) { notFound() }
 
     return (
         <Grid columns='1' gap='5'>

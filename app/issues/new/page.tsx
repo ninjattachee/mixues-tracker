@@ -1,11 +1,7 @@
-'use client';
-
-import dynamic from 'next/dynamic';
-
-const IssueForm = dynamic(() => import('../_components/IssueForm'), { ssr: false });
+import ClientIssueForm from '../_components/ClientIssueForm';
 
 const NewIssuePage = () => {
-    return <IssueForm />
+    return <ClientIssueForm />
 }
 
 export default NewIssuePage

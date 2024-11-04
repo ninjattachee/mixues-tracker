@@ -20,6 +20,7 @@ interface IssueFormProps {
     issue?: Issue;
 }
 
+
 const IssueForm = ({ issue }: IssueFormProps) => {
     const router = useRouter();
     const { register, handleSubmit, control, formState: { errors } } = useForm<IssueFormData>({

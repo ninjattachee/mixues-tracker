@@ -3,6 +3,15 @@ import { NextRequest, NextResponse } from "next/server";
 import prisma from "@/prisma/client";
 import { issueSchema } from "@/app/validationSchemas";
 
+export async function GET(request: NextRequest, props: { params: Promise<{ id: string }> }) {
+    const { id } = await props.params;
+    const issue = await prisma.issue.findUnique({ where: { id: parseInt(id) } });
+
+    if (!issue) return NextResponse.json({ error: 'Issue not found' }, { status: 404 });
+
+    return NextResponse.json(issue);
+}
+
 export async function PATCH(request: NextRequest, props: { params: Promise<{ id: string }> }) {
     const params = await props.params;
     const body = await request.json();

@@ -5,13 +5,13 @@ import { Skeleton } from '@/app/components'
 
 const LoadingIssueDetailPage = async () => {
     return (
-        <Box>
+        <Box className='max-w-xl'>
             <Skeleton width='13.8rem' height='1.5rem'/>
             <Flex gap='3' my='2'>
                 <Skeleton width='3rem' />
                 <Skeleton width='10rem' />
             </Flex>
-            <Card className="prose max-w-full" mt='4'>
+            <Card className="prose" mt='4'>
                 <Skeleton count={3} />
             </Card>
             <Flex className="mt-5 justify-self-end">
