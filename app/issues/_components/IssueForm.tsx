@@ -46,6 +46,7 @@ const IssueForm = ({ issue }: IssueFormProps) => {
                 await axios.post('/api/issues', data);
             }
             router.push('/issues');
+            router.refresh();
         } catch (error) {
             setError('Failed to create issue');
         } finally {
