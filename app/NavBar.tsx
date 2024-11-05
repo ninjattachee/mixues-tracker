@@ -5,7 +5,7 @@ import { usePathname } from 'next/navigation';
 import React from 'react'
 import { BiSolidBug } from "react-icons/bi";
 import classnames from 'classnames';
-import { Box, Container, Flex } from '@radix-ui/themes';
+import { Avatar, Box, Container, DropdownMenu, Flex, Text } from '@radix-ui/themes';
 import { useSession } from 'next-auth/react';
 
 interface NavLink {
@@ -54,7 +54,27 @@ const NavBar = () => {
                         {
                             status === 'loading' ? 'Loading...' :
                                 status === 'unauthenticated' ? <Link href="/api/auth/signin">Login</Link> :
-                                    <Link href="/api/auth/signout">Logout</Link>
+                                    <DropdownMenu.Root>
+                                        <DropdownMenu.Trigger>
+                                            <Avatar
+                                                src={session?.user?.image || undefined}
+                                                fallback="?"
+                                                radius="full"
+                                                size="2"
+                                                className='cursor-pointer'
+                                            />
+                                        </DropdownMenu.Trigger>
+                                        <DropdownMenu.Content>
+                                            <DropdownMenu.Label>
+                                                <Text>
+                                                    {session?.user?.email}
+                                                </Text>
+                                            </DropdownMenu.Label>
+                                            <DropdownMenu.Item>
+                                                <Link href="/api/auth/signout">Logout</Link>
+                                            </DropdownMenu.Item>
+                                        </DropdownMenu.Content>
+                                    </DropdownMenu.Root>
                         }
                     </Box>
                 </Flex>
