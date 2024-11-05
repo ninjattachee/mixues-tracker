@@ -1,7 +1,7 @@
-import { NextRequest, NextResponse } from "next/server";
-import prisma from "@/prisma/client";
-import { issueSchema } from "@/app/validationSchemas";
 import { auth } from "@/app/auth";
+import { patchIssueSchema } from "@/app/validationSchemas";
+import prisma from "@/prisma/client";
+import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(
   request: NextRequest,
@@ -26,11 +26,19 @@ export async function PATCH(
 
   const params = await props.params;
   const body = await request.json();
-  const validation = issueSchema.safeParse(body);
+  const validation = patchIssueSchema.safeParse(body);
   if (!validation.success)
     return NextResponse.json(validation.error.format(), { status: 400 });
 
-  const { title, description } = validation.data;
+  const { assigneeId, title, description } = body;
+
+  if (assigneeId) {
+    const user = await prisma.user.findUnique({
+      where: { id: assigneeId },
+    });
+    if (!user)
+      return NextResponse.json({ error: "Invalid assignee" }, { status: 400 });
+  }
 
   const issue = await prisma.issue.findUnique({
     where: { id: parseInt(params.id) },
@@ -41,7 +49,7 @@ export async function PATCH(
 
   const updatedIssue = await prisma.issue.update({
     where: { id: issue.id },
-    data: { title, description },
+    data: { title, description, assigneeId },
   });
 
   return NextResponse.json(updatedIssue, { status: 200 });
