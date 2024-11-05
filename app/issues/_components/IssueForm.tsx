@@ -1,4 +1,3 @@
-'use client';
 
 import { Button, Callout, TextField } from '@radix-ui/themes';
 import "easymde/dist/easymde.min.css";

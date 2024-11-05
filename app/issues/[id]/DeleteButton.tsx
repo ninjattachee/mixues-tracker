@@ -1,8 +1,9 @@
 'use client';
 
 import { Spinner } from '@/app/components';
-import { AlertDialog, Button, Flex } from '@radix-ui/themes';
+import { AlertDialog, Button, Flex, Text } from '@radix-ui/themes';
 import axios from 'axios';
+import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 
@@ -10,18 +11,20 @@ const DeleteButton = ({ issueId }: { issueId: number }) => {
   const router = useRouter();
   const [error, setError] = useState<boolean>(false);
   const [isDeleting, setIsDeleting] = useState<boolean>(false);
+  const { status } = useSession();
 
   async function deleteIssue({ issueId }: { issueId: number }) {
-    setIsDeleting(true);
-    try {
-      await axios.delete(`/api/issues/${issueId}`);
-      router.push('/issues/list');
-      router.refresh();
-    } catch (error) {
-      setError(true);
-    } finally {
-      setIsDeleting(false);
-    }
+
+      setIsDeleting(true);
+      try {
+        await axios.delete(`/api/issues/${issueId}`);
+        router.push('/issues/list');
+        router.refresh();
+      } catch (error) {
+        setError(true);
+      } finally {
+        setIsDeleting(false);
+      }
   }
 
   return (
@@ -38,7 +41,7 @@ const DeleteButton = ({ issueId }: { issueId: number }) => {
           <AlertDialog.Description>Are you sure you want to delete this issue? This action cannot be undone.</AlertDialog.Description>
           <Flex mt='4' gap='3' justify='end'>
             <AlertDialog.Cancel>
-              <Button variant='soft'>Cancel</Button>
+              <Button color='gray' variant='soft'>Cancel</Button>
             </AlertDialog.Cancel>
             <AlertDialog.Action>
               <Button color='red' onClick={() => deleteIssue({ issueId })}>Delete Issue</Button>
