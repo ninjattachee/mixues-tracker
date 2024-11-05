@@ -5,8 +5,9 @@ import { usePathname } from 'next/navigation';
 import React from 'react'
 import { BiSolidBug } from "react-icons/bi";
 import classnames from 'classnames';
-import { Avatar, Box, Container, DropdownMenu, Flex, Spinner, Text } from '@radix-ui/themes';
+import { Avatar, Box, Container, DropdownMenu, Flex, Text } from '@radix-ui/themes';
 import { useSession } from 'next-auth/react';
+import { Skeleton } from '@/app/components';
 
 interface NavLink {
     href: string;
@@ -63,7 +64,7 @@ const NavLinks = () => {
 const AuthStatus = () => {
     const { status, data: session } = useSession();
 
-    if (status === 'loading') return <Spinner />
+    if (status === 'loading') return <Skeleton width="3rem" height="1rem" />
 
     if (status === 'unauthenticated') return <Link className='nav-link' href="/api/auth/signin">Login</Link>
 
