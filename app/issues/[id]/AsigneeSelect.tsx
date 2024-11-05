@@ -12,30 +12,27 @@ const AsigneeSelect = ({ issue }: { issue: Issue }) => {
     data: users,
     error,
     isLoading,
-  } = useQuery({
-    queryKey: ["users"],
-    queryFn: () => axios.get<User[]>("/api/users").then((res) => res.data),
-    staleTime: 1000 * 60 * 60,
-    retry: 3,
-  });
+  } = useUsers();
 
   if (isLoading) return <Skeleton height="2rem" />;
 
   if (error) return null;
 
+  const assignIssue = (userId: string) => {
+    axios
+      .patch(`/api/issues/${issue.id}`, {
+        assigneeId: userId === "unassigned" ? null : userId,
+      })
+      .catch(() => {
+        toast.error("Failed to reassign issue.");
+      });
+  };
+
   return (
     <>
       <Select.Root
         defaultValue={issue.assigneeId ? issue.assigneeId.toString() : ""}
-        onValueChange={(userId) => {
-          axios
-            .patch(`/api/issues/${issue.id}`, {
-              assigneeId: userId === "unassigned" ? null : userId,
-            })
-            .catch(() => {
-              toast.error("Failed to reassign issue.");
-            });
-        }}
+        onValueChange={assignIssue}
       >
         <Select.Trigger placeholder="Assignee" />
         <Select.Content>
@@ -54,5 +51,12 @@ const AsigneeSelect = ({ issue }: { issue: Issue }) => {
     </>
   );
 };
+
+const useUsers = () => useQuery({
+    queryKey: ["users"],
+    queryFn: () => axios.get<User[]>("/api/users").then((res) => res.data),
+    staleTime: 1000 * 60 * 60,
+    retry: 3,
+  });
 
 export default AsigneeSelect;
