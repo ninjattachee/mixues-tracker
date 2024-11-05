@@ -26,7 +26,7 @@ const IssueDetailPage = async ({ params }: { params: Promise<{ id: string }> }) 
                 {
                     session && (
                         <Flex direction='column' justify='center' gap='4' className="max-w-full">
-                            <AsigneeSelect />
+                            <AsigneeSelect issue={issue} />
                             <EditIssueButton issueId={issue.id} />
                             <DeleteButton issueId={issue.id} />
                         </Flex>
