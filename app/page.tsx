@@ -1,8 +1,7 @@
-import { Flex } from "@radix-ui/themes";
-import Pagination from "./components/Pagination";
+import { Heading } from "@radix-ui/themes";
 
 export default function Home() {
   return (
-      <Pagination itemCount={100} pageSize={10} currentPage={10} />
+      <Heading>Hello World</Heading>
   );
 }
