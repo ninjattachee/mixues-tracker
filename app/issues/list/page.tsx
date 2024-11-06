@@ -1,15 +1,17 @@
 import { IssueStatusBadge, Link } from "@/app/components";
+import NextLink from "next/link";
 import prisma from "@/prisma/client";
 import { Table } from "@radix-ui/themes";
 import IssueActions from "./IssueActions";
-import { Status } from "@prisma/client";
+import { Issue, Status } from "@prisma/client";
+import { ArrowUpIcon } from "@radix-ui/react-icons";
 
 const IssuesPage = async ({
   searchParams,
 }: {
-  searchParams: Promise<{ status: Status }>;
+  searchParams: Promise<{ status: Status; orderBy: keyof Issue }>;
 }) => {
-  const { status } = await searchParams;
+  const { status, orderBy } = await searchParams;
   const statuses = Object.values(Status);
   const statusToFilterBy = statuses.includes(status) ? status : undefined;
   const issues = await prisma.issue.findMany({
@@ -18,17 +20,39 @@ const IssuesPage = async ({
     },
   });
 
+  const columns: {
+    label: string;
+    value: keyof Issue;
+    className?: "hidden md:table-cell";
+  }[] = [
+    { label: "Title", value: "title" },
+    { label: "Status", value: "status" },
+    { label: "Created", value: "createdAt", className: "hidden md:table-cell" },
+  ];
+
   return (
     <div>
       <IssueActions />
       <Table.Root variant="surface">
         <Table.Header>
           <Table.Row>
-            <Table.ColumnHeaderCell>Title</Table.ColumnHeaderCell>
-            <Table.ColumnHeaderCell>Status</Table.ColumnHeaderCell>
-            <Table.ColumnHeaderCell className="hidden md:table-cell">
-              Created
-            </Table.ColumnHeaderCell>
+            {columns.map((column) => (
+              <Table.ColumnHeaderCell
+                key={column.value}
+                className={column.className}
+              >
+                <NextLink
+                  href={{
+                    query: { status, orderBy: column.value },
+                  }}
+                >
+                  {column.label}
+                </NextLink>
+                {column.value === orderBy && (
+                  <ArrowUpIcon className="inline ml-1" />
+                )}
+              </Table.ColumnHeaderCell>
+            ))}
           </Table.Row>
         </Table.Header>
         <Table.Body>
