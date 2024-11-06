@@ -14,12 +14,6 @@ const IssuesPage = async ({
   const { status, orderBy } = await searchParams;
   const statuses = Object.values(Status);
   const statusToFilterBy = statuses.includes(status) ? status : undefined;
-  const issues = await prisma.issue.findMany({
-    where: {
-      status: statusToFilterBy,
-    },
-  });
-
   const columns: {
     label: string;
     value: keyof Issue;
@@ -30,6 +24,13 @@ const IssuesPage = async ({
     { label: "Created", value: "createdAt", className: "hidden md:table-cell" },
   ];
 
+  const issues = await prisma.issue.findMany({
+    where: {
+      status: statusToFilterBy,
+    },
+    orderBy: columns.map(column => column.value).includes(orderBy) ? { [orderBy]: "asc" } : undefined,
+  });
+  
   return (
     <div>
       <IssueActions />
