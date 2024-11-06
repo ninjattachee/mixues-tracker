@@ -1,10 +1,8 @@
-import { Button } from "@radix-ui/themes";
-import Link from "next/link";
+import { Flex } from "@radix-ui/themes";
+import Pagination from "./components/Pagination";
 
 export default function Home() {
   return (
-    <div>
-      <Button><Link href="/issues/new">Create New Issue</Link></Button>
-    </div>
-  )
+      <Pagination itemCount={100} pageSize={10} currentPage={10} />
+  );
 }
