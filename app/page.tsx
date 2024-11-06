@@ -1,7 +1,7 @@
-import { Heading } from "@radix-ui/themes";
+import LatestIssues from "./LatestIssues";
 
 export default function Home() {
   return (
-      <Heading>Hello World</Heading>
+      <LatestIssues />
   );
 }
