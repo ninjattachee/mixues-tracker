@@ -11,8 +11,8 @@ import QueryClientProvider from "./QueryClientProvider";
 const inter = Inter({ subsets: ['latin'], variable: "--font-inter", })
 
 export const metadata: Metadata = {
-  title: 'Issue Tracker',
-  description: 'Track issues and bugs',
+  title: 'Mixues - Issue Tracker',
+  description: 'Issue tracking app for Mixin Network and Mixin Messenger',
 }
 
 export default function RootLayout({
