@@ -3,6 +3,7 @@ import prisma from "@/prisma/client";
 import { Status } from "@prisma/client";
 import IssueActions from "./IssueActions";
 import IssueTable, { columnNames, IssueQuery } from "./IssueTable";
+import { Metadata } from "next";
 
 
 const IssuesPage = async ({
@@ -49,3 +50,8 @@ const IssuesPage = async ({
 export const dynamic = "force-dynamic";
 
 export default IssuesPage;
+
+export const metadata: Metadata = {
+  title: "Mixues - Issues",
+  description: "List of issues for Mixin Network and Mixin Messenger",
+};
