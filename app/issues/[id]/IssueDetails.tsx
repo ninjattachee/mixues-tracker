@@ -8,7 +8,7 @@ const IssueDetails = ({ issue }: { issue: Issue }) => {
         <>
             <Heading>{issue.title}</Heading>
             <Flex gap='3' my='2'>
-                <StatusBadgeSelector status={issue.status} issueId={issue.id} />
+                <StatusBadgeSelector status={issue.status} issueId={issue.id} assigneeId={issue.assigneeId} />
                 <Text size="2">Created: {issue.createdAt.toDateString()}</Text>
             </Flex>
                 <Card className="prose max-w-full" mt='4'>

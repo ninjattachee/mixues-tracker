@@ -8,11 +8,7 @@ import { Skeleton } from "@/app/components";
 import toast, { Toaster } from "react-hot-toast";
 
 const AsigneeSelect = ({ issue }: { issue: Issue }) => {
-  const {
-    data: users,
-    error,
-    isLoading,
-  } = useUsers();
+  const { data: users, error, isLoading } = useUsers();
 
   if (isLoading) return <Skeleton height="2rem" />;
 
@@ -25,6 +21,25 @@ const AsigneeSelect = ({ issue }: { issue: Issue }) => {
       })
       .catch(() => {
         toast.error("Failed to reassign issue.");
+      })
+      .finally(() => {
+        axios
+          .get(`/api/issues/${issue.id}`)
+          .then((res) => {
+            const issue: Issue = res.data;
+            issue.assigneeId
+              ? toast.success("Issue assigned to user.")
+              : toast.success("Issue unassigned.");
+            issue.assigneeId &&
+              axios
+                .patch(`/api/issues/${issue.id}`, { status: "IN_PROGRESS" })
+                .catch(() => {
+                  toast.error("Failed to update issue status.");
+                });
+          })
+          .catch(() => {
+            toast.error("Failed to get issue.");
+          });
       });
   };
 
@@ -52,7 +67,8 @@ const AsigneeSelect = ({ issue }: { issue: Issue }) => {
   );
 };
 
-const useUsers = () => useQuery({
+const useUsers = () =>
+  useQuery({
     queryKey: ["users"],
     queryFn: () => axios.get<User[]>("/api/users").then((res) => res.data),
     staleTime: 1000 * 60 * 60,
