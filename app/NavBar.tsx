@@ -24,6 +24,10 @@ interface NavLink {
 const navLinks: NavLink[] = [
   { href: "/", label: "Dashboard" },
   { href: "/issues/list", label: "Issues" },
+  {
+    href: "/issues/archived?orderBy=updatedAt&order=desc",
+    label: "Archived",
+  },
 ];
 
 const NavBar = () => {

@@ -7,22 +7,22 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import toast from "react-hot-toast";
 
-const ArchiveButton = ({ issue }: { issue: Issue }) => {
+const RestoreButton = ({ issue }: { issue: Issue }) => {
   const route = useRouter();
-  const [isArchiving, setIsArchiving] = useState(false);
+  const [isRestoring, setIsRestoring] = useState(false);
 
-  const archiveIssue = async () => {
+  const restoreIssue = async () => {
     try {
-      setIsArchiving(true);
+      setIsRestoring(true);
       await axios.patch(`/api/issues/${issue.id}`, {
-        archived: true,
+        archived: false,
       });
       route.refresh();
-      toast.success("Issue archived.");
+      toast.success("Issue restored.");
     } catch (error) {
-      toast.error("Failed to archive issue.");
+      toast.error("Failed to restore issue.");
     } finally {
-      setIsArchiving(false);
+      setIsRestoring(false);
     }
   };
 
@@ -30,14 +30,14 @@ const ArchiveButton = ({ issue }: { issue: Issue }) => {
     <Button
       size="1"
       variant="soft"
-      color="iris"
+      color="green"
       highContrast
-      onClick={archiveIssue}
-      disabled={isArchiving}
+      onClick={restoreIssue}
+      disabled={isRestoring}
     >
-      {isArchiving ? "Archiving..." : "Archive"}
+      {isRestoring ? "Restoring..." : "Restore"}
     </Button>
   );
 };
 
-export default ArchiveButton;
+export default RestoreButton;

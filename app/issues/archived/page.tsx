@@ -1,12 +1,11 @@
 import Pagination from "@/app/components/Pagination";
 import prisma from "@/prisma/client";
 import { Status } from "@prisma/client";
-import IssueActions from "./IssueActions";
-import IssueTable, { IssueQuery } from "./IssueTable";
-import { columnNames, columns } from "../../components/columns";
-import { Metadata } from "next";
+import { Heading } from "@radix-ui/themes";
+import IssueTable, { IssueQuery } from "../list/IssueTable";
+import { archivedColumnNames, archivedColumns } from "../../components/columns";
 
-const IssuesPage = async ({
+const ArchivedIssuesPage = async ({
   searchParams,
 }: {
   searchParams: Promise<IssueQuery>;
@@ -15,7 +14,7 @@ const IssuesPage = async ({
 
   const statuses = Object.values(Status);
   const statusToFilterBy = statuses.includes(status) ? status : undefined;
-  const where = { status: statusToFilterBy, archived: false };
+  const where = { status: statusToFilterBy, archived: true };
 
   const itemsPerPage = parseInt(pageSize || "10");
   const itemCount = await prisma.issue.count({
@@ -29,16 +28,16 @@ const IssuesPage = async ({
 
   const issues = await prisma.issue.findMany({
     where,
-    orderBy: columnNames.includes(orderBy) ? { [orderBy]: order } : undefined,
+    orderBy: archivedColumnNames.includes(orderBy) ? { [orderBy]: order } : undefined,
     skip: (currentPage - 1) * itemsPerPage,
     take: itemsPerPage,
   });
 
   return (
     <div>
-      <IssueActions />
+      <Heading size="4" mb="3">Archived Issues</Heading>
       <IssueTable
-        columns={columns}
+        columns={archivedColumns}
         searchParams={{
           status,
           orderBy,
@@ -56,11 +55,4 @@ const IssuesPage = async ({
   );
 };
 
-export const dynamic = "force-dynamic";
-
-export default IssuesPage;
-
-export const metadata: Metadata = {
-  title: "Mixues - Issues",
-  description: "List of issues for Mixin Network and Mixin Messenger",
-};
+export default ArchivedIssuesPage

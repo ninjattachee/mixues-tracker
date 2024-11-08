@@ -4,6 +4,8 @@ import { Issue, Status } from "@prisma/client";
 import { ArrowDownIcon, ArrowUpIcon } from "@radix-ui/react-icons";
 import { Flex, Table } from "@radix-ui/themes";
 import NextLink from "next/link";
+import { Column } from "../../components/columns";
+import RestoreButton from "@/app/components/RestoreButton";
 
 export interface IssueQuery {
   status: Status;
@@ -16,9 +18,14 @@ export interface IssueQuery {
 interface IssueTableProps {
   searchParams: IssueQuery;
   issues: Issue[];
+  columns: Column[];
 }
 
-const IssueTable = async ({ searchParams, issues }: IssueTableProps) => {
+const IssueTable = async ({
+  searchParams,
+  issues,
+  columns,
+}: IssueTableProps) => {
   const { status, orderBy, order } = searchParams;
 
   const newOrder = toggleOrder(order);
@@ -53,15 +60,16 @@ const IssueTable = async ({ searchParams, issues }: IssueTableProps) => {
         {issues.map((issue) => (
           <Table.Row key={issue.id}>
             <Table.Cell>
-              <Link href={`/issues/${issue.id}`}>{issue.title}</Link>
-            </Table.Cell>
-            <Table.Cell>
-              <Flex gap="2" align="center" justify="between">
-                <IssueStatusBadge status={issue.status} />
-                {issue.status === Status.CLOSED && (
+              <Flex gap="4" justify="start">
+                <Link href={`/issues/${issue.id}`}>{issue.title}</Link>
+                {issue.archived && <RestoreButton issue={issue} />}
+                {issue.status === Status.CLOSED && !issue.archived && (
                   <ArchiveButton issue={issue} />
                 )}
               </Flex>
+            </Table.Cell>
+            <Table.Cell>
+              <IssueStatusBadge status={issue.status} />
             </Table.Cell>
             <Table.Cell className="hidden md:table-cell">
               {issue.createdAt.toDateString()}
@@ -73,16 +81,6 @@ const IssueTable = async ({ searchParams, issues }: IssueTableProps) => {
   );
 };
 
-const columns: {
-  label: string;
-  value: keyof Issue;
-  className?: "hidden md:table-cell";
-}[] = [
-  { label: "Title", value: "title" },
-  { label: "Status", value: "status" },
-  { label: "Created", value: "createdAt", className: "hidden md:table-cell" },
-];
-
 const toggleOrder = (currentOrder: "asc" | "desc" | undefined) => {
   return currentOrder === undefined
     ? "asc"
@@ -90,7 +88,5 @@ const toggleOrder = (currentOrder: "asc" | "desc" | undefined) => {
     ? "desc"
     : "asc";
 };
-
-export const columnNames = columns.map((column) => column.value);
 
 export default IssueTable;
