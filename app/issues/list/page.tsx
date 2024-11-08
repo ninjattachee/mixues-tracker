@@ -5,13 +5,12 @@ import IssueActions from "./IssueActions";
 import IssueTable, { columnNames, IssueQuery } from "./IssueTable";
 import { Metadata } from "next";
 
-
 const IssuesPage = async ({
   searchParams,
 }: {
   searchParams: Promise<IssueQuery>;
 }) => {
-  const { status, orderBy, page } = await searchParams;
+  const { status, orderBy, page, order } = await searchParams;
 
   const statuses = Object.values(Status);
   const statusToFilterBy = statuses.includes(status) ? status : undefined;
@@ -29,7 +28,7 @@ const IssuesPage = async ({
 
   const issues = await prisma.issue.findMany({
     where,
-    orderBy: columnNames.includes(orderBy) ? { [orderBy]: "asc" } : undefined,
+    orderBy: columnNames.includes(orderBy) ? { [orderBy]: order } : undefined,
     skip: (currentPage - 1) * pageSize,
     take: pageSize,
   });
@@ -37,7 +36,7 @@ const IssuesPage = async ({
   return (
     <div>
       <IssueActions />
-      <IssueTable searchParams={{ status, orderBy }} issues={issues} />
+      <IssueTable searchParams={{ status, orderBy, order }} issues={issues} />
       <Pagination
         itemCount={itemCount}
         pageSize={pageSize}
@@ -48,6 +47,14 @@ const IssuesPage = async ({
 };
 
 export const dynamic = "force-dynamic";
+
+// const validateOrder = async (searchParams: Promise<IssueQuery>) => {
+//   let { order } = await searchParams;
+//   if (order !== "asc" && order !== "desc") {
+//     order = "asc";
+//   }
+//   return order;
+// };
 
 export default IssuesPage;
 

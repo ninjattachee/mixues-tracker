@@ -1,12 +1,13 @@
 import { IssueStatusBadge, Link } from "@/app/components";
 import { Issue, Status } from "@prisma/client";
-import { ArrowUpIcon } from "@radix-ui/react-icons";
+import { ArrowDownIcon, ArrowUpIcon } from "@radix-ui/react-icons";
 import { Table } from "@radix-ui/themes";
 import NextLink from "next/link";
 
 export interface IssueQuery {
   status: Status;
   orderBy: keyof Issue;
+  order?: "asc" | "desc";
   page?: string;
 }
 
@@ -16,7 +17,9 @@ interface IssueTableProps {
 }
 
 const IssueTable = async ({ searchParams, issues }: IssueTableProps) => {
-  const { status, orderBy } = searchParams;
+  const { status, orderBy, order } = searchParams;
+
+  const newOrder = toggleOrder(order);
 
   return (
     <Table.Root variant="surface">
@@ -29,14 +32,17 @@ const IssueTable = async ({ searchParams, issues }: IssueTableProps) => {
             >
               <NextLink
                 href={{
-                  query: { status, orderBy: column.value },
+                  query: { status, orderBy: column.value, order: newOrder },
                 }}
               >
                 {column.label}
               </NextLink>
-              {column.value === orderBy && (
-                <ArrowUpIcon className="inline ml-1" />
-              )}
+              {column.value === orderBy &&
+                (order === "asc" ? (
+                  <ArrowUpIcon className="inline ml-1" />
+                ) : order === "desc" ? (
+                  <ArrowDownIcon className="inline ml-1" />
+                ) : null)}
             </Table.ColumnHeaderCell>
           ))}
         </Table.Row>
@@ -69,6 +75,14 @@ const columns: {
   { label: "Status", value: "status" },
   { label: "Created", value: "createdAt", className: "hidden md:table-cell" },
 ];
+
+const toggleOrder = (currentOrder: "asc" | "desc" | undefined)  => {
+  return currentOrder === undefined
+  ? "asc"
+  : currentOrder === "asc"
+  ? "desc"
+  : "asc";
+};
 
 export const columnNames = columns.map((column) => column.value);
 
