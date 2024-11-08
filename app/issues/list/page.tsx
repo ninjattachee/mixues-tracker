@@ -10,18 +10,18 @@ const IssuesPage = async ({
 }: {
   searchParams: Promise<IssueQuery>;
 }) => {
-  const { status, orderBy, page, order } = await searchParams;
+  const { status, orderBy, page, order, pageSize } = await searchParams;
 
   const statuses = Object.values(Status);
   const statusToFilterBy = statuses.includes(status) ? status : undefined;
   const where = { status: statusToFilterBy };
 
-  const pageSize = 10;
+  const itemsPerPage = parseInt(pageSize || "10");
   const itemCount = await prisma.issue.count({
     where,
   });
 
-  const pageCount = Math.ceil(itemCount / pageSize);
+  const pageCount = Math.ceil(itemCount / itemsPerPage);
   let currentPage = parseInt(page || "1");
   if (currentPage > pageCount) currentPage = pageCount;
   if (currentPage < 1) currentPage = 1;
@@ -29,17 +29,25 @@ const IssuesPage = async ({
   const issues = await prisma.issue.findMany({
     where,
     orderBy: columnNames.includes(orderBy) ? { [orderBy]: order } : undefined,
-    skip: (currentPage - 1) * pageSize,
-    take: pageSize,
+    skip: (currentPage - 1) * itemsPerPage,
+    take: itemsPerPage,
   });
 
   return (
     <div>
       <IssueActions />
-      <IssueTable searchParams={{ status, orderBy, order }} issues={issues} />
+      <IssueTable
+        searchParams={{
+          status,
+          orderBy,
+          order,
+          pageSize: itemsPerPage.toString(),
+        }}
+        issues={issues}
+      />
       <Pagination
         itemCount={itemCount}
-        pageSize={pageSize}
+        pageSize={itemsPerPage}
         currentPage={currentPage}
       />
     </div>
@@ -47,14 +55,6 @@ const IssuesPage = async ({
 };
 
 export const dynamic = "force-dynamic";
-
-// const validateOrder = async (searchParams: Promise<IssueQuery>) => {
-//   let { order } = await searchParams;
-//   if (order !== "asc" && order !== "desc") {
-//     order = "asc";
-//   }
-//   return order;
-// };
 
 export default IssuesPage;
 

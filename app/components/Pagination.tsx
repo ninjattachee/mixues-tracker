@@ -30,6 +30,25 @@ const Pagination = ({ itemCount, pageSize, currentPage }: PaginationProps) => {
 
   return (
     <Flex mt="4" justify="end" align="center" gap="3">
+      <Text size="2" mx="2">
+        Total: {itemCount} items
+      </Text>
+      <select
+        className="text-sm mx-2"
+        value={pageSize}
+        onChange={(e) => {
+          const newSize = parseInt(e.target.value);
+          const params = new URLSearchParams(searchParams);
+          params.set("pageSize", newSize.toString());
+          router.push(`?${params.toString()}`);
+        }}
+      >
+        {[10, 20, 50, 100].map((size) => (
+          <option className="text-xs" key={size} value={size}>
+            {size} / Page
+          </option>
+        ))}
+      </select>
       <Text size="2">
         Page {currentPage} of {pageCount}
       </Text>
