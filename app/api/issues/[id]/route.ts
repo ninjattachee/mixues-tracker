@@ -24,13 +24,13 @@ export async function PATCH(
   if (!session)
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
-  const params = await props.params;
+  const { id: issueId } = await props.params;
   const body = await request.json();
   const validation = patchIssueSchema.safeParse(body);
   if (!validation.success)
     return NextResponse.json(validation.error.format(), { status: 400 });
 
-  const { assigneeId, title, description } = body;
+  const { assigneeId, title, description, status } = body;
 
   if (assigneeId) {
     const user = await prisma.user.findUnique({
@@ -41,7 +41,7 @@ export async function PATCH(
   }
 
   const issue = await prisma.issue.findUnique({
-    where: { id: parseInt(params.id) },
+    where: { id: parseInt(issueId) },
   });
 
   if (!issue)
@@ -49,7 +49,7 @@ export async function PATCH(
 
   const updatedIssue = await prisma.issue.update({
     where: { id: issue.id },
-    data: { title, description, assigneeId },
+    data: { title, description, assigneeId, status },
   });
 
   return NextResponse.json(updatedIssue, { status: 200 });

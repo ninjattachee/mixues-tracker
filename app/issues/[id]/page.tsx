@@ -8,10 +8,6 @@ import { auth } from "@/app/auth";
 import AsigneeSelect from "./AsigneeSelect";
 import { cache } from "react";
 
-const fetchIssue = cache((issueId: number) =>
-  prisma.issue.findUnique({ where: { id: issueId } })
-);
-
 const IssueDetailPage = async ({
   params,
 }: {
@@ -48,6 +44,10 @@ const IssueDetailPage = async ({
     </Grid>
   );
 };
+
+const fetchIssue = cache((issueId: number) =>
+  prisma.issue.findUnique({ where: { id: issueId } })
+);
 
 export async function generateMetadata({
   params,

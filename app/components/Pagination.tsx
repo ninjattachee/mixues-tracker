@@ -30,7 +30,7 @@ const Pagination = ({ itemCount, pageSize, currentPage }: PaginationProps) => {
 
   return (
     <Flex mt="4" justify="end" align="center" gap="3">
-      <Text size="2" mx="2">
+      <Text size="2">
         Total: {itemCount} items
       </Text>
       <select
