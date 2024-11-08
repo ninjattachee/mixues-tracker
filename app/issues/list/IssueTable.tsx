@@ -58,7 +58,9 @@ const IssueTable = async ({ searchParams, issues }: IssueTableProps) => {
             <Table.Cell>
               <Flex gap="2" align="center" justify="between">
                 <IssueStatusBadge status={issue.status} />
-                <ArchiveButton issue={issue} />
+                {issue.status === Status.CLOSED && (
+                  <ArchiveButton issue={issue} />
+                )}
               </Flex>
             </Table.Cell>
             <Table.Cell className="hidden md:table-cell">

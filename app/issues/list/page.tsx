@@ -14,7 +14,7 @@ const IssuesPage = async ({
 
   const statuses = Object.values(Status);
   const statusToFilterBy = statuses.includes(status) ? status : undefined;
-  const where = { status: statusToFilterBy };
+  const where = { status: statusToFilterBy, archived: false };
 
   const itemsPerPage = parseInt(pageSize || "10");
   const itemCount = await prisma.issue.count({
