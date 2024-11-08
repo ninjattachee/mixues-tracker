@@ -20,4 +20,5 @@ export const patchIssueSchema = z.object({
     .optional()
     .nullable(),
   status: z.nativeEnum(Status).optional(),
+  archived: z.boolean().optional(),
 });

@@ -30,12 +30,7 @@ const AsigneeSelect = ({ issue }: { issue: Issue }) => {
             issue.assigneeId
               ? toast.success("Issue assigned to user.")
               : toast.success("Issue unassigned.");
-            issue.assigneeId &&
-              axios
-                .patch(`/api/issues/${issue.id}`, { status: "IN_PROGRESS" })
-                .catch(() => {
-                  toast.error("Failed to update issue status.");
-                });
+            handleStatusUpdate(issue);
           })
           .catch(() => {
             toast.error("Failed to get issue.");
@@ -74,5 +69,25 @@ const useUsers = () =>
     staleTime: 1000 * 60 * 60,
     retry: 3,
   });
+
+const updateStatusToInProgress = (issueId: number) => {
+  axios.patch(`/api/issues/${issueId}`, { status: "IN_PROGRESS" }).catch(() => {
+    toast.error("Failed to update issue status.");
+  });
+};
+
+const updateStatusToOpen = (issueId: number) => {
+  axios.patch(`/api/issues/${issueId}`, { status: "OPEN" }).catch(() => {
+    toast.error("Failed to update issue status.");
+  });
+};
+
+const handleStatusUpdate = (issue: Issue) => {
+  if (issue.assigneeId && issue.status === "OPEN") {
+    updateStatusToInProgress(issue.id);
+  } else if (!issue.assigneeId && issue.status === "IN_PROGRESS") {
+    updateStatusToOpen(issue.id);
+  }
+};
 
 export default AsigneeSelect;

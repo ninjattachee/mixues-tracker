@@ -1,7 +1,8 @@
 import { IssueStatusBadge, Link } from "@/app/components";
+import ArchiveButton from "@/app/components/ArchiveButton";
 import { Issue, Status } from "@prisma/client";
 import { ArrowDownIcon, ArrowUpIcon } from "@radix-ui/react-icons";
-import { Table } from "@radix-ui/themes";
+import { Flex, Table } from "@radix-ui/themes";
 import NextLink from "next/link";
 
 export interface IssueQuery {
@@ -55,7 +56,10 @@ const IssueTable = async ({ searchParams, issues }: IssueTableProps) => {
               <Link href={`/issues/${issue.id}`}>{issue.title}</Link>
             </Table.Cell>
             <Table.Cell>
-              <IssueStatusBadge status={issue.status} />
+              <Flex gap="2" align="center" justify="between">
+                <IssueStatusBadge status={issue.status} />
+                <ArchiveButton issue={issue} />
+              </Flex>
             </Table.Cell>
             <Table.Cell className="hidden md:table-cell">
               {issue.createdAt.toDateString()}
@@ -77,12 +81,12 @@ const columns: {
   { label: "Created", value: "createdAt", className: "hidden md:table-cell" },
 ];
 
-const toggleOrder = (currentOrder: "asc" | "desc" | undefined)  => {
+const toggleOrder = (currentOrder: "asc" | "desc" | undefined) => {
   return currentOrder === undefined
-  ? "asc"
-  : currentOrder === "asc"
-  ? "desc"
-  : "asc";
+    ? "asc"
+    : currentOrder === "asc"
+    ? "desc"
+    : "asc";
 };
 
 export const columnNames = columns.map((column) => column.value);

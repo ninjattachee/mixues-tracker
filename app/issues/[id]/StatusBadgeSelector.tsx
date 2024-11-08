@@ -9,11 +9,9 @@ import { toast } from "react-hot-toast";
 const StatusBadgeSelector = ({
   status,
   issueId,
-  assigneeId,
 }: {
   status: Status;
   issueId: number;
-  assigneeId: string | null;
 }) => {
   const handleStatusChange = (status: string) => {
     axios.patch(`/api/issues/${issueId}`, { status }).catch((error) => {

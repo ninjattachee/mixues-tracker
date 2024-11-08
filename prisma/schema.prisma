@@ -22,6 +22,7 @@ model Issue {
   updatedAt   DateTime @updatedAt
   assigneeId  String?  @map("assignee_id")
   assignee    User?    @relation(fields: [assigneeId], references: [id])
+  archived    Boolean  @default(false)
 }
 
 enum Status {
