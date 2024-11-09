@@ -6,16 +6,30 @@ import IssueTable, { IssueQuery } from "./IssueTable";
 import { columnNames, columns } from "../../components/columns";
 import { Metadata } from "next";
 
+interface IssueSearchParams extends IssueQuery {
+  assigneeId?: string;
+}
+
+interface Filter {
+  status?: Status;
+  archived?: boolean;
+  assigneeId?: string | null;
+}
+
 const IssuesPage = async ({
   searchParams,
 }: {
-  searchParams: Promise<IssueQuery>;
+  searchParams: Promise<IssueSearchParams>;
 }) => {
-  const { status, orderBy, page, order, pageSize } = await searchParams;
+  const { status, orderBy, page, order, pageSize, assigneeId } = await searchParams;
 
   const statuses = Object.values(Status);
   const statusToFilterBy = statuses.includes(status) ? status : undefined;
-  const where = { status: statusToFilterBy, archived: false };
+  const where: Filter = { status: statusToFilterBy, archived: false };
+
+  if (assigneeId) {
+    where.assigneeId = assigneeId;
+  }
 
   const itemsPerPage = parseInt(pageSize || "10");
   const itemCount = await prisma.issue.count({
