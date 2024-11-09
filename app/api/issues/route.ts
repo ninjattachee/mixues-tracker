@@ -11,13 +11,19 @@ export async function GET(request: NextRequest) {
 
 export async function POST(request: NextRequest) {
   const session = await auth();
-  if (!session)
+  if (!session || !session.user?.id)
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
   try {
     const body = await request.json();
     const { title, description } = issueSchema.parse(body);
-    const issue = await prisma.issue.create({ data: { title, description } });
+    const issue = await prisma.issue.create({ 
+      data: { 
+        title, 
+        description,
+        creatorId: session.user.id 
+      } 
+    });
     return NextResponse.json(issue, { status: 201 });
   } catch (error) {
     if (error instanceof z.ZodError) {

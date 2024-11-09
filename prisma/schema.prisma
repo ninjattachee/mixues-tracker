@@ -21,7 +21,9 @@ model Issue {
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
   assigneeId  String?  @map("assignee_id")
-  assignee    User?    @relation(fields: [assigneeId], references: [id])
+  assignee    User?    @relation("AssignedIssues", fields: [assigneeId], references: [id])
+  creatorId   String?   @map("creator_id")
+  creator     User?     @relation("CreatedIssues", fields: [creatorId], references: [id])
   archived    Boolean  @default(false)
   comments    Comment[]
 }
@@ -70,7 +72,8 @@ model User {
   image         String?
   accounts      Account[]
   sessions      Session[]
-  Issue         Issue[]
+  assignedIssues Issue[]   @relation("AssignedIssues")
+  createdIssues  Issue[]   @relation("CreatedIssues")
   comments      Comment[]
 
   @@map("users")

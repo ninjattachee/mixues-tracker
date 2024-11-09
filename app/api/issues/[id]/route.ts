@@ -60,15 +60,22 @@ export async function DELETE(
   props: { params: Promise<{ id: string }> }
 ) {
   const session = await auth();
-  if (!session)
+  if (!session || !session.user?.id)
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
   const { id } = await props.params;
 
-  const issue = await prisma.issue.findUnique({ where: { id: parseInt(id) } });
+  const issue = await prisma.issue.findUnique({ 
+    where: { id: parseInt(id) },
+    select: { creatorId: true }
+  });
+
   if (!issue)
     return NextResponse.json({ error: "Invalid issue id" }, { status: 400 });
 
-  await prisma.issue.delete({ where: { id: issue.id } });
+  if (issue.creatorId !== session.user.id)
+    return NextResponse.json({ error: "Not authorized to delete this issue" }, { status: 403 });
+
+  await prisma.issue.delete({ where: { id: parseInt(id) } });
   return NextResponse.json({ message: "Issue deleted" }, { status: 200 });
 }

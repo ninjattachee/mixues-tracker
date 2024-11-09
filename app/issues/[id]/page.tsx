@@ -47,7 +47,7 @@ const IssueDetailPage = async ({
           >
             <AsigneeSelect issue={issue} />
             <EditIssueButton issueId={issue.id} />
-            <DeleteButton issueId={issue.id} />
+            {session.userId === issue.creatorId && <DeleteButton issueId={issue.id} />}
           </Flex>
         )}
       </Box>
