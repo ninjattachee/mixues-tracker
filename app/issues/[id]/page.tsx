@@ -1,15 +1,15 @@
+import { auth } from "@/app/auth";
 import prisma from "@/prisma/client";
+import { Session } from "@prisma/client";
 import { Box, Flex, Grid, Text } from "@radix-ui/themes";
 import { notFound } from "next/navigation";
+import { cache } from "react";
+import AsigneeSelect from "./AsigneeSelect";
+import CommentForm from "./CommentForm";
+import CommentList from "./CommentList";
+import DeleteButton from "./DeleteButton";
 import EditIssueButton from "./EditIssueButton";
 import IssueDetails from "./IssueDetails";
-import DeleteButton from "./DeleteButton";
-import { auth } from "@/app/auth";
-import AsigneeSelect from "./AsigneeSelect";
-import { cache } from "react";
-import CommentList from "./CommentList";
-import CommentForm from "./CommentForm";
-import { Session } from "@prisma/client";
 
 const IssueDetailPage = async ({
   params,
@@ -23,8 +23,12 @@ const IssueDetailPage = async ({
     notFound();
   }
 
+  
   const session = (await auth()) as Session | null;
-
+  const onlooker =
+    session?.userId !== issue.creatorId &&
+    session?.userId !== issue.assigneeId;
+  
   return (
     <Grid columns={{ initial: "1", sm: "5" }} gap="5">
       <Box className="md:col-span-4">
@@ -48,10 +52,7 @@ const IssueDetailPage = async ({
             className="max-w-full"
           >
             <AsigneeSelect issue={issue} session={session} />
-            {(session.userId === issue.creatorId ||
-              session.userId === issue.assigneeId) && (
-              <EditIssueButton issueId={issue.id} />
-            )}
+            {!onlooker && <EditIssueButton issueId={issue.id} />}
             {session.userId === issue.creatorId && (
               <DeleteButton issueId={issue.id} />
             )}
