@@ -1,4 +1,4 @@
-import { Comment } from "@prisma/client";
+import { Comment, Session } from "@prisma/client";
 import { Card, Flex, Text } from "@radix-ui/themes";
 import DeleteCommentButton from "./DeleteCommentButton";
 
@@ -6,7 +6,12 @@ interface CommentWithUser extends Comment {
   user: { name: string | null; image: string | null };
 }
 
-const CommentList = ({ comments }: { comments: CommentWithUser[] }) => {
+interface CommentListProps {
+  comments: CommentWithUser[];
+  session: Session | null;
+}
+
+const CommentList = ({ comments, session }: CommentListProps) => {
   return (
     <Flex direction="column" gap="3">
       {comments.map((comment) => (
@@ -29,9 +34,11 @@ const CommentList = ({ comments }: { comments: CommentWithUser[] }) => {
             </Flex>
           </Flex>
           <Text>{comment.content}</Text>
-          <Flex justify="end">
-            <DeleteCommentButton commentId={comment.id} />
-          </Flex>
+          {session && comment.userId === session.userId && (
+            <Flex justify="end">
+              <DeleteCommentButton commentId={comment.id} />
+            </Flex>
+          )}
         </Card>
       ))}
     </Flex>

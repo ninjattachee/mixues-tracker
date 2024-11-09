@@ -9,6 +9,7 @@ import AsigneeSelect from "./AsigneeSelect";
 import { cache } from "react";
 import CommentList from './CommentList';
 import CommentForm from './CommentForm';
+import { Session } from "@prisma/client";
 
 const IssueDetailPage = async ({
   params,
@@ -22,7 +23,7 @@ const IssueDetailPage = async ({
     notFound();
   }
 
-  const session = await auth();
+  const session = await auth() as Session | null; 
 
   return (
     <Grid columns={{ initial: "1", sm: "5" }} gap="5">
@@ -32,7 +33,7 @@ const IssueDetailPage = async ({
           <Text size="5" mb="4">Comments</Text>
           {session && <CommentForm issueId={issue.id} />}
           <Box className="mt-5">
-            <CommentList comments={issue.comments} />
+            <CommentList comments={issue.comments} session={session} />
           </Box>
         </Box>
       </Box>
