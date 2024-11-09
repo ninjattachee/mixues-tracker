@@ -1,16 +1,14 @@
 "use client";
 
 import { Skeleton } from "@/app/components";
-import { Issue, User } from "@prisma/client";
+import { Issue, Session, User } from "@prisma/client";
 import { Select, Text } from "@radix-ui/themes";
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
-import { useSession } from "next-auth/react";
 import toast, { Toaster } from "react-hot-toast";
 
-const AsigneeSelect = ({ issue }: { issue: Issue }) => {
+const AsigneeSelect = ({ issue, session }: { issue: Issue; session: Session }) => {
   const { data: users, error, isLoading } = useUsers();
-  const { data: session } = useSession();
 
   if (isLoading) return <Skeleton height="2rem" />;
 
@@ -40,18 +38,21 @@ const AsigneeSelect = ({ issue }: { issue: Issue }) => {
       });
   };
 
+  const onlooker =
+    session.userId !== issue.creatorId &&
+    session.userId !== issue.assigneeId;
+
   return (
     <>
-      {session?.user?.id === issue.creatorId ||
-      session?.user?.id === issue.assigneeId ? null : (
+      {onlooker && (
         <Text size="4">Assignee:</Text>
       )}
       <Select.Root
-        disabled={issue.creatorId !== session?.user?.id}
+        disabled={onlooker}
         defaultValue={issue.assigneeId ? issue.assigneeId.toString() : ""}
         onValueChange={assignIssue}
       >
-        <Select.Trigger placeholder="Assignee" />
+        <Select.Trigger placeholder="Select Assignee" />
         <Select.Content>
           <Select.Group>
             <Select.Label>Suggestions</Select.Label>

@@ -47,7 +47,7 @@ const IssueDetailPage = async ({
             gap="4"
             className="max-w-full"
           >
-            <AsigneeSelect issue={issue} />
+            <AsigneeSelect issue={issue} session={session} />
             {(session.userId === issue.creatorId ||
               session.userId === issue.assigneeId) && (
               <EditIssueButton issueId={issue.id} />
