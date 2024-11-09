@@ -1,14 +1,16 @@
 "use client";
 
-import { Select } from "@radix-ui/themes";
+import { Skeleton } from "@/app/components";
+import { Issue, User } from "@prisma/client";
+import { Select, Text } from "@radix-ui/themes";
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
-import { Issue, User } from "@prisma/client";
-import { Skeleton } from "@/app/components";
+import { useSession } from "next-auth/react";
 import toast, { Toaster } from "react-hot-toast";
 
 const AsigneeSelect = ({ issue }: { issue: Issue }) => {
   const { data: users, error, isLoading } = useUsers();
+  const { data: session } = useSession();
 
   if (isLoading) return <Skeleton height="2rem" />;
 
@@ -40,7 +42,12 @@ const AsigneeSelect = ({ issue }: { issue: Issue }) => {
 
   return (
     <>
+      {session?.user?.id === issue.creatorId ||
+      session?.user?.id === issue.assigneeId ? null : (
+        <Text size="4">Assignee:</Text>
+      )}
       <Select.Root
+        disabled={issue.creatorId !== session?.user?.id}
         defaultValue={issue.assigneeId ? issue.assigneeId.toString() : ""}
         onValueChange={assignIssue}
       >

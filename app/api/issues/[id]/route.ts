@@ -47,6 +47,10 @@ export async function PATCH(
   if (!issue)
     return NextResponse.json({ error: "Issue not found" }, { status: 404 });
 
+  // if the user is not the creator or the assignee, they cannot edit the issue
+  if (issue.creatorId !== session.user?.id && issue.assigneeId !== session.user?.id)
+    return NextResponse.json({ error: "Not authorized to edit this issue" }, { status: 403 });
+
   const updatedIssue = await prisma.issue.update({
     where: { id: issue.id },
     data: { title, description, assigneeId, status, archived },

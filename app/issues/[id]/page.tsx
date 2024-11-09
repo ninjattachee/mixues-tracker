@@ -7,8 +7,8 @@ import DeleteButton from "./DeleteButton";
 import { auth } from "@/app/auth";
 import AsigneeSelect from "./AsigneeSelect";
 import { cache } from "react";
-import CommentList from './CommentList';
-import CommentForm from './CommentForm';
+import CommentList from "./CommentList";
+import CommentForm from "./CommentForm";
 import { Session } from "@prisma/client";
 
 const IssueDetailPage = async ({
@@ -23,14 +23,16 @@ const IssueDetailPage = async ({
     notFound();
   }
 
-  const session = await auth() as Session | null; 
+  const session = (await auth()) as Session | null;
 
   return (
     <Grid columns={{ initial: "1", sm: "5" }} gap="5">
       <Box className="md:col-span-4">
         <IssueDetails issue={issue} />
         <Box className="mt-5">
-          <Text size="5" mb="4">Comments</Text>
+          <Text size="5" mb="4">
+            Comments
+          </Text>
           {session && <CommentForm issueId={issue.id} />}
           <Box className="mt-5">
             <CommentList comments={issue.comments} session={session} />
@@ -46,8 +48,13 @@ const IssueDetailPage = async ({
             className="max-w-full"
           >
             <AsigneeSelect issue={issue} />
-            <EditIssueButton issueId={issue.id} />
-            {session.userId === issue.creatorId && <DeleteButton issueId={issue.id} />}
+            {(session.userId === issue.creatorId ||
+              session.userId === issue.assigneeId) && (
+              <EditIssueButton issueId={issue.id} />
+            )}
+            {session.userId === issue.creatorId && (
+              <DeleteButton issueId={issue.id} />
+            )}
           </Flex>
         )}
       </Box>
@@ -56,7 +63,7 @@ const IssueDetailPage = async ({
 };
 
 const fetchIssue = cache((issueId: number) =>
-  prisma.issue.findUnique({ 
+  prisma.issue.findUnique({
     where: { id: issueId },
     include: {
       comments: {
@@ -64,15 +71,15 @@ const fetchIssue = cache((issueId: number) =>
           user: {
             select: {
               name: true,
-              image: true
-            }
-          }
+              image: true,
+            },
+          },
         },
         orderBy: {
-          createdAt: 'desc'
-        }
-      }
-    }
+          createdAt: "desc",
+        },
+      },
+    },
   })
 );
 
