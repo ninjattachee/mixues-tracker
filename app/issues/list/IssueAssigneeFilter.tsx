@@ -1,17 +1,42 @@
-import prisma from "@/prisma/client";
-import { Select } from "@radix-ui/themes";
-import { cache } from "react";
+"use client";
 
-const IssueAssigneeFilter = async () => {
-  const assignees = await fetchAssignees();
+import { Select } from "@radix-ui/themes";
+import { useRouter, useSearchParams } from "next/navigation";
+import { useEffect, useState } from "react";
+
+interface Assignee {
+  assigneeId: string;
+  assignee: { name: string };
+}
+
+const IssueAssigneeFilter = () => {
+  const [assignees, setAssignees] = useState<Assignee[]>([]);
+  const router = useRouter();
+  const searchParams = useSearchParams();
+
+  useEffect(() => {
+    fetch("/api/assignees")
+      .then((response) => response.json())
+      .then(setAssignees);
+  }, []);
+
+  const refreshSearchParams = (assigneeId?: string) => {
+    const params = new URLSearchParams(searchParams);
+    if (assigneeId && assigneeId !== "all_assignees") {
+      params.set("assigneeId", assigneeId);
+    } else {
+      params.delete("assigneeId");
+    }
+    router.push(`?${params.toString()}`);
+  };
 
   return (
-    <Select.Root>
+    <Select.Root onValueChange={refreshSearchParams}>
       <Select.Trigger placeholder="Filter by assignee..." />
       <Select.Content>
         <Select.Item value="all_assignees">All assignees</Select.Item>
-        {assignees.map((assignee) => (
-          <Select.Item value={assignee.assigneeId!}>
+        {assignees.map((assignee: Assignee) => (
+          <Select.Item key={assignee.assigneeId} value={assignee.assigneeId!}>
             {assignee.assignee?.name}
           </Select.Item>
         ))}
@@ -19,31 +44,5 @@ const IssueAssigneeFilter = async () => {
     </Select.Root>
   );
 };
-
-const fetchAssignees = cache(async () => {
-  const assignees = await prisma.issue.findMany({
-    where: {
-      assigneeId: {
-        not: null,
-      },
-    },
-    select: {
-      assigneeId: true,
-      assignee: {
-        select: {
-          name: true,
-        },
-      },
-    },
-  });
-
-  // Filter out duplicate assignees
-  const uniqueAssignees = assignees.filter(
-    (assignee, index, self) =>
-      index === self.findIndex((a) => a.assigneeId === assignee.assigneeId)
-  );
-
-  return uniqueAssignees;
-});
 
 export default IssueAssigneeFilter;
