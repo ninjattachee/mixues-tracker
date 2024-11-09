@@ -32,7 +32,7 @@ const IssueDetailPage = async ({
   return (
     <Grid columns={{ initial: "1", sm: "5" }} gap="5">
       <Box className="md:col-span-4">
-        <IssueDetails issue={issue} />
+        <IssueDetails issue={issue} onlooker={onlooker} />
         <Box className="mt-5">
           <Text size="5" mb="4">
             Comments

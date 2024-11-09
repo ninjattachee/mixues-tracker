@@ -9,9 +9,11 @@ import { toast } from "react-hot-toast";
 const StatusBadgeSelector = ({
   status,
   issueId,
+  onlooker,
 }: {
   status: Status;
   issueId: number;
+  onlooker: boolean;
 }) => {
   const handleStatusChange = (status: string) => {
     axios.patch(`/api/issues/${issueId}`, { status }).catch((error) => {
@@ -20,7 +22,7 @@ const StatusBadgeSelector = ({
   };
 
   return (
-    <Select.Root defaultValue={status} onValueChange={handleStatusChange}>
+    <Select.Root defaultValue={status} onValueChange={handleStatusChange} disabled={onlooker}>
       <Select.Trigger variant="ghost" />
       <Select.Content>
         {Object.keys(statusMap).map((status) => (

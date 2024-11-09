@@ -3,12 +3,12 @@ import { Card, Flex, Heading, Text } from '@radix-ui/themes'
 import ReactMarkdown from 'react-markdown'
 import StatusBadgeSelector from './StatusBadgeSelector'
 
-const IssueDetails = ({ issue }: { issue: Issue }) => {
+const IssueDetails = ({ issue, onlooker }: { issue: Issue, onlooker: boolean }) => {
     return (
         <>
             <Heading>{issue.title}</Heading>
             <Flex gap='3' my='2'>
-                <StatusBadgeSelector status={issue.status} issueId={issue.id} />
+                <StatusBadgeSelector status={issue.status} issueId={issue.id} onlooker={onlooker} />
                 <Text size="2">Created: {issue.createdAt.toDateString()}</Text>
             </Flex>
                 <Card className="prose max-w-full" mt='4'>
