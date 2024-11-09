@@ -1,5 +1,5 @@
 import prisma from "@/prisma/client";
-import { Box, Flex, Grid } from "@radix-ui/themes";
+import { Box, Flex, Grid, Text } from "@radix-ui/themes";
 import { notFound } from "next/navigation";
 import EditIssueButton from "./EditIssueButton";
 import IssueDetails from "./IssueDetails";
@@ -7,6 +7,8 @@ import DeleteButton from "./DeleteButton";
 import { auth } from "@/app/auth";
 import AsigneeSelect from "./AsigneeSelect";
 import { cache } from "react";
+import CommentList from './CommentList';
+import CommentForm from './CommentForm';
 
 const IssueDetailPage = async ({
   params,
@@ -26,6 +28,13 @@ const IssueDetailPage = async ({
     <Grid columns={{ initial: "1", sm: "5" }} gap="5">
       <Box className="md:col-span-4">
         <IssueDetails issue={issue} />
+        <Box className="mt-5">
+          <Text size="5" mb="4">Comments</Text>
+          {session && <CommentForm issueId={issue.id} />}
+          <Box className="mt-5">
+            <CommentList comments={issue.comments} />
+          </Box>
+        </Box>
       </Box>
       <Box>
         {session && (
@@ -46,7 +55,24 @@ const IssueDetailPage = async ({
 };
 
 const fetchIssue = cache((issueId: number) =>
-  prisma.issue.findUnique({ where: { id: issueId } })
+  prisma.issue.findUnique({ 
+    where: { id: issueId },
+    include: {
+      comments: {
+        include: {
+          user: {
+            select: {
+              name: true,
+              image: true
+            }
+          }
+        },
+        orderBy: {
+          createdAt: 'desc'
+        }
+      }
+    }
+  })
 );
 
 export async function generateMetadata({

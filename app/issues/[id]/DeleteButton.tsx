@@ -1,9 +1,8 @@
 'use client';
 
 import { Spinner } from '@/app/components';
-import { AlertDialog, Button, Flex, Text } from '@radix-ui/themes';
+import { AlertDialog, Button, Flex } from '@radix-ui/themes';
 import axios from 'axios';
-import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 
@@ -11,7 +10,6 @@ const DeleteButton = ({ issueId }: { issueId: number }) => {
   const router = useRouter();
   const [error, setError] = useState<boolean>(false);
   const [isDeleting, setIsDeleting] = useState<boolean>(false);
-  const { status } = useSession();
 
   async function deleteIssue({ issueId }: { issueId: number }) {
 
