@@ -1,9 +1,10 @@
 import Pagination from "@/app/components/Pagination";
 import prisma from "@/prisma/client";
-import { Status } from "@prisma/client";
+import { Session, Status } from "@prisma/client";
 import IssueActions from "./IssueActions";
 import IssueTable, { IssueQuery } from "./IssueTable";
 import { columnNames, columns } from "../../components/columns";
+import { auth } from "@/app/auth";
 import { Metadata } from "next";
 
 interface IssueSearchParams extends IssueQuery {
@@ -22,7 +23,7 @@ const IssuesPage = async ({
   searchParams: Promise<IssueSearchParams>;
 }) => {
   const { status, orderBy, page, order, pageSize, assigneeId } = await searchParams;
-
+  const session = (await auth()) as Session | null;
   const statuses = Object.values(Status);
   const statusToFilterBy = statuses.includes(status) ? status : undefined;
   const where: Filter = { status: statusToFilterBy, archived: false };
@@ -52,6 +53,7 @@ const IssuesPage = async ({
     <div>
       <IssueActions />
       <IssueTable
+        session={session}
         columns={columns}
         searchParams={{
           status,

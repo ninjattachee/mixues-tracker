@@ -1,15 +1,17 @@
+import { auth } from "@/app/auth";
 import Pagination from "@/app/components/Pagination";
 import prisma from "@/prisma/client";
-import { Status } from "@prisma/client";
+import { Session, Status } from "@prisma/client";
 import { Heading } from "@radix-ui/themes";
-import IssueTable, { IssueQuery } from "../list/IssueTable";
 import { archivedColumnNames, archivedColumns } from "../../components/columns";
+import IssueTable, { IssueQuery } from "../list/IssueTable";
 
 const ArchivedIssuesPage = async ({
   searchParams,
 }: {
   searchParams: Promise<IssueQuery>;
 }) => {
+  const session = (await auth()) as Session | null;
   const { status, orderBy, page, order, pageSize } = await searchParams;
 
   const statuses = Object.values(Status);
@@ -37,6 +39,7 @@ const ArchivedIssuesPage = async ({
     <div>
       <Heading size="4" mb="3">Archived Issues</Heading>
       <IssueTable
+        session={session}
         columns={archivedColumns}
         searchParams={{
           status,
