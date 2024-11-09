@@ -80,8 +80,17 @@ const fetchIssue = cache((issueId: number) =>
           createdAt: "desc",
         },
       },
+      creator: {
+        select: {
+          name: true,
+          image: true,
+        },
+      },
     },
-  })
+  }).then(issue => issue ? {
+    ...issue,
+    creator: issue.creator || undefined
+  } : null)
 );
 
 export async function generateMetadata({
