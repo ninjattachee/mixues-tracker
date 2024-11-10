@@ -50,6 +50,7 @@ const NavBar = () => {
 
 const NavLinks = () => {
   const pathname = usePathname();
+  console.log(pathname);
 
   return (
     <ul className="flex space-x-4">
@@ -59,7 +60,10 @@ const NavLinks = () => {
             key={link.href}
             className={classnames({
               "nav-link": true,
-              "!text-zinc-900": pathname === link.href,
+              "!text-zinc-900":
+                pathname === "/issues/archived"
+                  ? link.href.startsWith(pathname)
+                  : pathname === link.href,
             })}
             href={link.href}
           >
